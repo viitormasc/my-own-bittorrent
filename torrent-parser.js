@@ -3,10 +3,11 @@
 import fs from 'fs'
 import bencode from 'bencode'
 import crypto from 'crypto'
-import bignum from 'bignum'
+import bignum from 'bn.js'
+
 
 export const open = (filepath) =>  {
-  return bencode.decode(fs.readdirSync(filepath))
+  return bencode.decode(fs.readFileSync(filepath),'utf8')
 }
 
 

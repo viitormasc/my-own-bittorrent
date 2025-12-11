@@ -16,15 +16,13 @@ export function getPeers (torrent,callback) {
   socket.on('message', response => {
     if(respType(response) === 'connect'){
       const connResp = parseConnResp(response)
-      const announceReq = buildAnnounceReq(connResp.connectionId)
+      const announceReq = buildAnnounceReq(connResp.connectionId, torrent)
       udpSend(socket,announceReq,url)
     }else if (respType(response) === 'announce'){
       const announceResp = parseAnnounceResp(response)
       callback(announceResp.peers)
     }
   })
-
-  const announceReq = buildAnnounceReq(connResp.connectionId, torrent)
 }
 
 function udpSend(socket,message,rawUrl,callback= ()=> {}) {
