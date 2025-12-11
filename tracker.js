@@ -5,7 +5,6 @@ import dgram from 'dgram'
 import {Buffer} from 'buffer'
 import {parse as urlParse} from 'url'
 import crypto from 'crypto'
-import genId from './util'
 
 
 export function getPeers (torrent,callback) {
@@ -19,10 +18,10 @@ export function getPeers (torrent,callback) {
       const connResp = parseConnResp(response)
       const announceReq = buildAnnounceReq(connResp.connectionId)
       udpSend(socket,announceReq,url)
-    }else if (respType(response) === 'announce'{
+    }else if (respType(response) === 'announce'){
       const announceResp = parseAnnounceResp(response)
       callback(announceResp.peers)
-    })
+    }
   })
 
   const announceReq = buildAnnounceReq(connResp.connectionId, torrent)
