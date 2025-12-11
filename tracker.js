@@ -19,7 +19,7 @@ export function getPeers (torrent,callback) {
       const connResp = parseConnResp(response)
       const announceReq = buildAnnounceReq(connResp.connectionId)
       udpSend(socket,announceReq,url)
-    }else if (resptType(response) === 'announce'{
+    }else if (respType(response) === 'announce'{
       const announceResp = parseAnnounceResp(response)
       callback(announceResp.peers)
     })
@@ -92,7 +92,28 @@ function buildAnnounceReq(connId, torrent, port=6881) {
 }
 
 function parseAnnounceResp(resp) {
-  // ...
+
+  function group(iterable,groupSize) {
+    let groups = []
+    for(let i =0; i<iterable.length; i+=groupSize){
+      groups.push(iterable.slice(i,i+groupSize))
+    }
+    return groups
+  }
+
+  return {
+    action: resp.readUInt32BE(0),
+    transactionId: resp.readUInt32BE(4),
+    leechers: resp.readUInt32BE(12),
+    seeders: resp.readUInt32BE(16),
+    peers: group(resp.slice(20),6).map(address=> {
+      return{
+        ip: address.slice(0,4).join('.'),
+        port: address.readUInt16BE(4)
+      }
+    })
+  }
+
 }
 
 
